@@ -1,0 +1,601 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="unicode">
+    <title>TaskMQ Platform node configuration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="Content/flatui/bootstrap.css" rel="stylesheet">
+    <link href="Content/flatui/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="Content/flatui/flat-ui.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <link rel="stylesheet" href="Content/flatui/cf.css">
+
+    
+    <link rel="stylesheet" href="Content/toastr.css">
+    <style type="text/css">
+        .animate-repeat {
+        line-height:40px;
+        list-style:none;
+        box-sizing:border-box;
+        }
+ 
+        .animate-repeat.ng-move,
+        .animate-repeat.ng-enter,
+        .animate-repeat.ng-leave {
+         -webkit-transition:0.5s linear all;
+        transition:0.5s linear all;
+        }
+ 
+        .animate-repeat.ng-leave.ng-leave-active,
+        .animate-repeat.ng-move,
+        .animate-repeat.ng-enter {
+        opacity:0;
+        max-height:0;
+        }
+ 
+        .animate-repeat.ng-leave,
+        .animate-repeat.ng-move.ng-move-active,
+        .animate-repeat.ng-enter.ng-enter-active {
+        opacity:1;
+        max-height:40px;
+        }
+
+        .animchange {
+          transition: background-color 1s;
+          -webkit-transition: background-color 1s ease-in-out;
+        }
+        .animchange.rchange {
+          background-color: #FCF8E3;
+        }
+
+    </style>
+
+  </head>
+  <body>
+
+
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="#">BBQ</a>
+            <div class="navbar-content">
+                <ul class="nav  pull-right">
+                    <li class="active">
+                        <a href="#">AdminPanel</a>
+                    </li>
+                    <li>
+                        <a href="#">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" ng-app="bbq" data-framework="angularjs" ng-controller="bbqCtrl" style="display:none">
+    <!-- <div class="page-header">
+        <h1>BBQ&nbsp;
+          <sup>configuration editor</sup>
+            <br>
+        </h1>
+    </div>
+    -->
+
+
+    <div class="alert alert-info hidden-phone" ng-show="triggers.Info">
+        
+        <span>
+            <b>TaskMQ host unreachable or configuration out of date!</b>&nbsp; Specify host endpoint:<br />
+            <input type="text" id="txt-configurationhost" value="http://127.0.0.1:82/" />&nbsp;
+            <button class="btn" ng-click="sync()">Connect</button></span>
+    </div>
+
+    <div class="alert alert-block" ng-show="triggers.wReset">
+        <b>Warning!</b> Parameters changed, required server reconfiguration.
+                <div class="btn-group pull-right" style="float: right; line-height: 20px; position: relative; right: -21px; top: -2px;">
+                    <button class="btn btn-warning" data-toggle="dropdown" href="#">Action</button>
+                    <a class="btn dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a ng-click="rollback_sync()" href="#">Rollback changes</a>
+                        </li>
+                        <li>
+                            <a ng-click="commit_reset()" href="#">Commit changes</a>
+                        </li>
+                    </ul>
+                </div>
+    </div>
+
+    <div class="alert alert-block" ng-show="triggers.wRestart">
+        <b>Warning!</b> Assembly sources changed, restart requied.
+        <div class="btn-group" style="float: right; line-height: 20px; position: relative; right: -21px; top: -2px;">
+            <button class="btn btn-danger" data-toggle="dropdown" href="#">Action</button>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a ng-click="rollback_sync()" href="#">Rollback </a>
+                </li>
+                <li>
+                    <a ng-click="commit_restart()" href="#">Commit And Restart</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tabbable">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#persp" data-toggle="tab">Service</a>
+            </li>
+            <li>
+                <a href="#servp" data-toggle="tab">Entities</a>
+            </li>
+            <li>
+                <a href="#assemblys" data-toggle="tab">Assemblies</a>
+            </li>
+            <li>
+                <a href="#configurations" data-toggle="tab">Configurations</a>
+            </li>
+        </ul>
+        <div class="tab-content row">
+            <div id="persp" class="tab-pane span11 active">
+                <div class="well">
+                    <h3>Tasks
+                    </h3>
+                    <p>
+                        The important part for bunching all components
+                  <a class="btn btn-primary pull-right"  role="button"  ng-click="show_newtask()"><i class="icon-plus-sign icon-white"></i>Create new</a>
+                    </p>
+
+                    <table class="table table-hover" id="t-tasks">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>description
+                      <br>
+                                </th>
+                                <th>interval/val
+                      <br>
+                                </th>
+                                <th>module</th>
+                                <th>channel</th>
+                                <th>parameters</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="animate-repeat animchange" ng-repeat="m in m_main.Tasks | orderBy:'Auto':false"  ng-animate=" 'animate' ">
+                                <td><a class="btn-link" ng-click="task_edit(m, $index)" ng-hide="m.Auto"><i class="icon-pencil"></i></a>
+                                    <a ng-show="m.Auto" data-toggle="tooltip" title="generated by module"><i class="icon-lock"></i></a></td><!-- means it reassignable -->
+                                <td>{{m.Description}}
+                                </td>
+                                <td>{{m.intervalType | intervt}}/{{m.intervalValue}}
+                                </td>
+                                <td>{{m.ModuleName}}</td>
+                                <td>{{m.ChannelName}}
+                                </td>
+                                <td>{{m.parameters | long}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="well">
+                    <h3>Modules
+                <br>
+                    </h3>
+                    <p>
+                        Service components
+                <br>
+                    </p>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>name
+                      <br>
+                                </th>
+                                <th>description
+                      <br>
+                                </th>
+                                <th>assembly library</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="m in m_mods.Modules">
+                                <td>{{m.Name}}
+                      <br>
+                                </td>
+                                <td>{{m.Description}}
+                      <br>
+                                </td>
+                                <td>{{m.TypeFullName}}
+                      <br>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="servp" class="tab-pane span11">
+                <div class="well">
+                    <h4>Channels</h4>
+                    <h4></h4>
+                    <p>
+                        Message model typing and node scaling<a class="btn btn-primary pull-right"><i class="icon-plus-sign icon-white"></i> Create new</a>
+                    </p>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id
+                                </th>
+                                <th>connection</th>
+                                <th>Mtype(name)
+                                </th>
+                                <th>throughput</th>
+                                <th>heartbeat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="m in m_main.Channels">
+                                <td>{{m.Name}}
+                                </td>
+                                <td>{{m.connectionName}}</td>
+                                <td class="chMtypeName" channel="{{m.Name}}">
+                                </td>
+                                <td><span class="channel-sparkline-throughput" statsel="{{m.Name}}">sparkline...</span></td>
+                                <td><span class="channel-sparkline-heartbeat" statsel="{{m.Name}}">sparkline...</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="well">
+                    <h4>Queues / connection parameters
+                <br>
+                    </h4>
+                    <h4></h4>
+                    <p>
+                        Contains persitant part<a class="btn btn-primary pull-right"><i class="icon-plus-sign icon-white"></i> Create new</a>
+                    </p>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id
+                      <br>
+                                </th>
+                                <th>queue</th>
+                                <th>connection string
+                      <br>
+                                </th>
+                                <th>database/collection(table)</th>
+                                <th>currentLevel
+                      <br>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="m in m_main.Connections">
+                                <td>{{m.Name}}
+                      <br>
+                                </td>
+                                <td>{{m.queueTypeName}}
+                      <br>
+                                </td>
+                                <td>{{m.connectionString}}
+                      <br>
+                                </td>
+                                <td>{{m.database}}/{{m.collection}}
+                      <br>
+                                </td>
+                                <td>15</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="assemblys" class="tab-pane span11">
+                <div style="" class="well tab-pane active">
+                    <h4>Assemblies, repositories
+                <br>
+                    </h4>
+                    <h4></h4>
+                    <p>
+                        Contains assemblys whose contains modules
+              <a class="btn btn-primary pull-right" ng-click="newassembly()"><i class="icon-plus-sign icon-white"></i>Create new</a>
+                    </p>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th></th>
+                                <th>strong name
+                      <br>
+                                </th>
+                                <th>Build Server Type
+                                </th>
+                                <th>parameters
+                      <br>
+                                </th>
+                                <th>actual
+                                </th>
+                                <th>loaded
+                                </th>
+                                <th>State
+                      <br>
+                                </th><th></th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="assembly in m_assemblys.Assemblys">
+                                <td><a class="btn-link" ng-click="assembly_edit(assembly)"><i class="icon-pencil"></i></a></td>
+                                <td>{{assembly.Name}}
+                      <br>
+                                </td>
+                                <td>{{assembly.BuildServerType}}
+                      <br>
+                                </td>
+                                <td>{{assembly.BSParameters | jsonshort}}
+                                    <br>
+                                </td>
+                                <td><span assembly_sel="{{assembly.Name}}" app_role="desc"> <a class="btn-link" ng-click="assembly_info(assembly)" title="view detail information"><i class="icon-ok"></i></a></span>
+                                </td>
+                                <td><span assembly_sel="{{assembly.Name}}" app_role="desc-loaded"> <a class="btn-link" ng-click="assembly_info(assembly)" title="view detail information"><i class="icon-ok"></i></a></span>
+                                </td>
+                                <td><span assembly_sel="{{assembly.Name}}" app_role="status"></span></td>
+                                <td> <a class="btn-link" ng-click="fetch_assembly(assembly)" title="fetch assembly source"><i class="icon-refresh"></i></a></td>
+                                <td> <a class="btn-link" ng-click="build_assembly(assembly)" title="build assembly source"><i class="icon-filter"></i></a></td>
+                                <td> <a class="btn-link" ng-click="package_assembly(assembly)" title="build/update package"><i class="icon-download-alt"></i></a></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <table></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- TASK NEW Modal -->
+    <div id="modal-new-task" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newtaskModal" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="newtaskModal">New Task</h3>
+        </div>
+        <div class="modal-body">
+            <form name="newTaskForm" class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="desc">Description</label>
+                    <div class="controls">
+                        <textarea name="desc" ng-model="newtask.description" rows="2" style="font-size: 11pt; width: 80%" ng-pattern="textp" required></textarea>
+                        
+                        <span class="error" ng-show="newTaskForm.desc.$error.required">Required!</span>
+                        <span class="error" ng-show="newTaskForm.desc.$error.pattern">No spaces at start and only one between words!</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label" for="mod">Module</label>
+                    <div class="controls">
+                        <select name="mod" class="customselect" ng-change="newtask.module=newtask.mpxy.Name" ng-model="newtask.mpxy" ng-options="c as c.Name for c in m_mods.Modules | filter:c.Role='Consumer'">
+                        </select>
+                    </div>
+                </div>
+                 <div class="control-group">
+                    
+                     <textarea name="params" ng-model="newtask.parametersStr" rows="8" style="font-size: 11pt; width: 80%" placeholder="Module parameters (json)"></textarea>
+                    <div class="controls">
+                        
+                        <a class="btn btn-small btn-info" ng-click="task_represent(newtask.mpxy)"><i class="icon-leaf icon-white"></i>Represent</a>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="chan">Channel</label>
+                    <div class="controls">
+                        <select class="customselect" name="chan" ng-model="newtask.channel" ng-options="c.Name as c.Name for c in m_main.Channels">
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="it">Interval</label>
+                    <div class="controls">
+                        <select name="it" ng-change="newtask.intervalType=newtask.itpxy.t" class="customselect" ng-model="newtask.itpxy" ng-options="c as c.l for c in intervals | filter:c.s=true" required>
+                        </select><br />
+                        <div ng-show="newtask.itpxy.sv">
+                            <input type="number" name="iv" ng-model="newtask.intervalValue" min="0" max="1000">
+                            <span class="error" ng-show="newTaskForm.iv.$error.number">Not valid number!</span>
+                            <span class="error" ng-show="newTaskForm.iv.$error.max || newTaskForm.iv.$error.min">Not in space!</span>
+                        </div>
+                    </div>
+                </div>
+               
+            </form>
+        </div>
+        <div class="modal-footer"><!--              FOOTER -->
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button class="btn btn-primary" ng-click="newtask_add()">Save and close</button>
+        </div>
+    </div>
+
+    <!-- TASK EDIT Modal -->
+    <div id="modal-edit-task" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="edittaskModal" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="edittaskModal"><button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" ng-click="task_edit_del()">Delete</button> 
+                &nbsp; Edit Task</h3>
+        </div>
+        <div class="modal-body">
+            <form name="editTaskForm" class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="desc">Description</label>
+                    <div class="controls">
+                        <textarea name="desc" ng-model="edit_task.Description" rows="2" style="font-size: 11pt; width: 80%" ng-pattern="textp" required></textarea>
+                        
+                        <span class="error" ng-show="editTaskForm.desc.$error.required">Required!</span>
+                        <span class="error" ng-show="editTaskForm.desc.$error.pattern">No spaces at start and only one between words!</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="mod">Module</label>
+                    <div class="controls">
+                        
+                        <select name="mod" class="customselect" ng-change="edit_task.ModuleName=newtask.mpxyz.Name" ng-model="newtask.mpxyz" ng-options="c.Name for c in m_mods.Modules | filter:c.Role='Consumer'">
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    
+                     <textarea name="params" ng-model="newtask.parametersStr" rows="8" style="font-size: 11pt; width: 80%" placeholder="Module parameters (json)"></textarea>
+                    <div class="controls">
+                       
+                        <a class="btn btn-small btn-info" ng-click="task_represent(newtask.mpxyz)"><i class="icon-leaf icon-white"></i>Represent</a>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="chan">Channel</label>
+                    <div class="controls">
+                        <select class="customselect" name="chan" ng-options="c.Name as c.Name for c in m_main.Channels" ng-model="edit_task.ChannelName">
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="it">Interval</label>
+                    <div class="controls">
+                        <select name="it" ng-change="edit_task.intervalType=newtask.itpxy.t" class="customselect" ng-model="newtask.itpxy" ng-options="c as c.l for c in intervals | filter:c.s=true" required>
+                        </select><br />
+                        <div ng-show="newtask.itpxy.sv">
+                            <input type="number" name="iv" ng-model="edit_task.intervalValue" min="0" max="1000">
+                            <span class="error" ng-show="editTaskForm.iv.$error.number">Not valid number!</span>
+                            <span class="error" ng-show="editTaskForm.iv.$error.max || newTaskForm.iv.$error.min">Not in space!</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer"><!--              FOOTER -->
+            
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button class="btn btn-primary" ng-click="task_edit_cpy()">Save and close</button>
+        </div>
+    </div>
+
+    <!-- Assembly info Modal -->
+    <div id="modal-info-assembly" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="assemblyInfoModal" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="asm-name">{{mi_cassembly.Name}}<small> assembly info</small></h3>
+        </div>
+        <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>Build Server Revision</dt>
+                    <dd>{{mi_cassembly.revisionSourceTag}}</dd>
+                    <dt>Build Server SCM Commit</dt>
+                    <dd><blockquote>{{mi_cassembly.revSCommitComment}}<small>{{mi_cassembly.revSCommiter}} @ {{mi_cassembly.revSCommitTime | date:'MMM d, y HH:mm:ss'}}</small></blockquote></dd>
+                    <br />
+                    <dt>Package Revision</dt>
+                    <dd>{{mi_cassembly.revisionTag}}</dd>
+                    <dt>Packaged SCM Commit</dt>
+                    
+                    <dd><blockquote>{{mi_cassembly.revCommitComment}}<small>{{mi_cassembly.revCommiter}} @ {{mi_cassembly.revCommitTime | date:'MMM d, y HH:mm:ss'}}</small></blockquote></dd>
+                    <dt>Package Date</dt>
+                    <dd>{{mi_cassembly.packaged | date:'MMM d, y HH:mm:ss'}}</dd>
+                    <br />
+                    <dt>IsLoaded</dt>
+                    <dd><a ng-show="mi_cassembly.loaded" title="loaded"><i class="icon-ok"></i></a><a ng-hide="mi_cassembly.loaded" title="not loaded"><i class="icon-warning-sign"></i></a></dd>
+                    <dt>Load Revision</dt>
+                    <dd>{{mi_cassembly.loadedRevision}}</dd>
+                    <dt>Load Info</dt>
+                    <dd>{{mi_cassembly.loadedRemarks}}</dd>
+                </dl>
+        </div>
+        <div class="modal-footer"><!--              FOOTER -->
+            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
+    
+    <!-- Assembly edit Modal -->
+    <div id="modal-edit-assembly" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="assemblyEditModal" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="asm-name">{{edit_assembly.Name}}<small> assembly edit</small></h3>
+        </div>
+        <div class="modal-body">
+            <form name="editAssemblyForm" class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" name="name" ng-model="edit_assembly.Name" style="font-size: 11pt; width: 80%" ng-pattern="textp" required></input>
+                        <span class="error" ng-show="editAssemblyForm.desc.$error.required">Required!</span>
+                        <span class="error" ng-show="editAssemblyForm.desc.$error.pattern">No spaces at start and only one between words!</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="bs">BuildServer</label>
+                    <div class="controls">
+                        <select name="bs" class="customselect"  ng-model="edit_assembly.BuildServerType" ng-options="bs.Name as bs.Name for bs in m_extra.BuildServerTypes">
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <textarea name="params" ng-model="newtask.parametersStr" rows="8" style="font-size: 11pt; width: 80%" placeholder="Build Server parameters (json)"></textarea>
+                    <div class="controls">
+                        <a class="btn btn-small btn-info" ng-click="assembly_represent(edit_assembly.BuildServerType)"><i class="icon-leaf icon-white"></i>Represent</a>
+                    </div>
+                </div>
+                <div class="control-group">
+                   
+                    <div class="controls">
+                        <a class="btn btn-small btn-warning btn-lg" ng-click="assembly_checkParameters(edit_assembly.BuildServerType, newtask.parametersStr)"><i class="icon-thumbs-up icon-white"></i>Check connection</a>
+                        <div class="alert alert-block" id="checkBSresults"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer"><!--              FOOTER -->
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary" ng-click="assembly_edit_cpy()">Save and close</button>
+        </div>
+    </div>
+</div>
+<!-- /app -->
+
+
+       <!-- Load JS here for greater good =============================-->
+    <script src="Scripts/jquery-1.8.3.min.js"></script>
+    
+    
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/bootstrap-select.js"></script>
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    <script src="Scripts/bbq/angular-1.2.17.min.js"></script>
+    <script src="Scripts/bbq/angular-animate-1.2.17.min.js"></script>
+    <script src="Scripts/bbq/application.js"></script>
+    <script src="Scripts/bbq/app_ui.js"></script>
+    <script src="Scripts/bbq/toastr.js"></script>
+    <script src="Scripts/jquery.sparkline.min.js"></script>
+
+  </body>
+</html>
