@@ -1,0 +1,24 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="truss.mrg-min.js"></script> 
+
+<style type="text/css">
+body { background-color: gray ;}
+</style>
+</head>
+<body>
+	<script type="text/javascript">
+	var truss;
+	window.onload = function() {
+		var canvas = document.getElementById("zCanvas");
+		truss = truss_o.create(canvas);
+		truss.setViewEngine("SakuraPetalis");
+	};
+	</script>
+
+
+<canvas id="zCanvas" width="800" height="600"></canvas>
+</body>
+
+</html>
