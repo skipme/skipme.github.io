@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+	* 
+	{
+		box-sizing: border-box;
+	    font-family: Verdana,"Trebuchet MS",Helvetica,Arial,sans-serif;
+	    /*font-size: 8pt;*/
+	}
+	h1, h3, .desc {
+		text-align: center;
+	}
+</style>
+<title>спектральный радиус, степенной метод</title>
+</head>
+<body>
+
+<h1>спектральный радиус, степенной метод, ход решения онлайн</h1>
+<h2>ПАРАМЕТРЫ (ввести матрицу 3x3 через пробел и enter)</h2>
+<textarea id="MIn" style="width: 287px; height: 124px;"></textarea>
+<label><input type="checkbox" id="chbxEonly" />Только ошибки</label>
+<input type="button" onclick="uiBtn()" value="Решить" id="btn" />
+<p></p>
+
+<h2>ХОД:</h2>
+<textarea id="TOut" style="width: 480px; height: 270px;"></textarea>
+<p style="color: gray; font-size: small">// (c) Vitaliy Burdenkov (cerriun[at]gmail.com), 2015 </p>
+<script type="text/javascript" src="./lsd.js"></script>
+</body>
+</html>
