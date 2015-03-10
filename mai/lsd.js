@@ -94,7 +94,7 @@ function parseM(str)
       throw new Error("Количество ячеек в строке №"+ (i+1) +" не равно 3");
     for (var j = 0; j < arC.length; j++) { 
       L[j] = filterFloat(arC[j].replace(/,/g,'.'));
-      if(Number.isNaN(L[j]))
+      if(isNaN(L[j]))
       {  
         throw new Error("Ячейка в строке №"+ (i+1) +": '"+arC[j]+"', введена неверно");
       }
