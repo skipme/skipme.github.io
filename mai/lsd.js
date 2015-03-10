@@ -16,9 +16,15 @@ function MxV(m,v)
 }
 function N_V(v)
 {
-  var absA = [];
-  v.forEach(function(e){ absA.push( Math.abs(e));});
-  return Math.max.apply(this, absA);
+  var Max = Number.MIN_VALUE;
+  for (var i = 0; i < v.length; i++) {
+    if(Max < Math.abs(v[i]))
+      Max = Math.abs(v[i]);
+  };
+  return Max;
+  // var absA = [];
+  // v.forEach(function(e){ absA.push( Math.abs(e));});
+  // return Math.max.apply(this, absA);
 }
 
 function calc_Yn(Xk, XkN)
@@ -60,13 +66,13 @@ function Do(eOnly)
       strLog("Yn("+i+") = " + "("+printV(Yn)+")");
       strLog("Xk("+(i+1)+") = " + "("+printV(Xk)+")" + " N("+N_V(Xk)+")");
     }
-    if(EPS === Math.PI)
-    {
-      EPS = prevNXk;
-    }else{
+    //if(EPS === Math.PI)
+    //{
+    //  EPS = prevNXk;
+    //}else{
        prevEPS = EPS;
        EPS = Math.abs(N_V(Xk) - prevNXk);
-    }
+    //}
     strLog("E("+(i+1)+") = |"+ N_V(Xk) +" - "+ prevNXk.toFixed(4) +"| = "+ EPS.toFixed(4));
     if(!eOnly)
       strLog("\n");
