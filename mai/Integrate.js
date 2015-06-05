@@ -66,7 +66,7 @@ function printsum(a){
 	};
 	return result;
 }
-function mapSubArray(a)
+function mapSubArray(a)// take y only
 {
 	return a[1];
 }

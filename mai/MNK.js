@@ -146,7 +146,7 @@ function map(aX, aY, func)
 		throw new Error("func not function");
 	var result = [];
 	for (var i = 0; i < aX.length; i++) {
-		result.push(Number(func(aX[i], aY[i]).toFixed(4)));
+		result.push(Number(func(aX[i], aY[i], i).toFixed(4)));
 	};
 
 	return result;
@@ -197,15 +197,21 @@ function calc()
 	strline("P2: "+abc[0].toFixed(4)+"x^2"+(abc[1]>0?" + ":" ")+abc[1].toFixed(4)+"x"+(abc[2]>0?" + ":" ")+abc[2].toFixed(4)+" = 0");
 	strline("P1: "+bc[0].toFixed(4)+"x"+(bc[1]>0?" + ":" ")+bc[1].toFixed(4)+" = 0");
 	
-	function p1(x,y)
+	function p1(x,y,indx)
 	{
-		var p = (Number(bc[0].toFixed(4))*x+Number(bc[1].toFixed(4)))-y;
-		return p*p;
+		// var p = (Number(bc[0].toFixed(4))*x+Number(bc[1].toFixed(4)))-y;
+		// return p*p;
+
+		var p = Number(bc[0].toFixed(4))*x+Number(bc[1].toFixed(4));
+		return Math.pow(p-AY[indx], 2);
 	}
-	function p2(x,y)
+	function p2(x,y,indx)
 	{
-		var p = (Number(abc[0].toFixed(4))*x*x+Number(abc[1].toFixed(4))*x+Number(abc[2].toFixed(4)))-y;
-		return p*p;
+		// var p = (Number(abc[0].toFixed(4))*x*x+Number(abc[1].toFixed(4))*x+Number(abc[2].toFixed(4)))-y;
+		// return p*p;
+
+		var p = Number(abc[0].toFixed(4))*x*x+Number(abc[1].toFixed(4))*x+Number(abc[2].toFixed(4));
+		return Math.pow(p-AY[indx], 2);
 	}
 	strline("S2= "+printsum(map(AX, AY, p2))+"= "+sum(map(AX, AY, p2)));
 	strline("S1= "+printsum(map(AX, AY, p1))+"= "+sum(map(AX, AY, p1)));
@@ -219,3 +225,7 @@ calc();
 // 	[1,-6,2,5,-90],
 // 	[-8,-4,-1,-1,12]
 // 	]));
+
+
+// var AY = [-1.2689, 0, 1.2689, 2.6541, 4.4856, 9.9138];
+// console.log(["$"].concat(AY))
