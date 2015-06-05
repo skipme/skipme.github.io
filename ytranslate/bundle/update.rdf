@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
+  <r:Description about="urn:mozilla:extension:jid1-CxAfu9DDH0Q8gQ@jetpack">
+    <updates>
+      <r:Seq>
+        <r:li>
+          <r:Description>
+            <version>0.2.9.8b5</version>
+            <targetApplication>
+              <r:Description>
+                <id>jid1-CxAfu9DDH0Q8gQ@jetpack</id>
+                <minVersion>26.0</minVersion>
+                <maxVersion>38.5</maxVersion>
+                <updateLink>http://skipme.github.io/ytranslate/bundle/y-translate.xpi</updateLink>
+                <updateHash>sha256:eeb3530e66714e974963fc577510b51a519c8341ce1b2384849704095a5574c3</updateHash>
+              </r:Description>
+            </targetApplication>
+          </r:Description>
+        </r:li>
+      </r:Seq>
+    </updates>
+  </r:Description>
+</r:RDF>
