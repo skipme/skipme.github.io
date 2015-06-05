@@ -5,13 +5,15 @@
       <RDF:Seq>
         <RDF:li>
           <RDF:Description>
-            <em:version>0.2.9.8b5</em:version>
+            <em:version>0.2.9.8b4</em:version>
             <em:targetApplication>
               <RDF:Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
                 <em:minVersion>26.0</em:minVersion>
-                <em:maxVersion>39.0</em:maxVersion>
+                <em:maxVersion>39.*</em:maxVersion>
                 <em:updateLink>https://skipme.github.io/ytranslate/bundle/y-translate.xpi</em:updateLink>
+                <em:updateHash>sha256:f0dce31f69b701bf8f63b28bc485255c02b78307222ca543b137d88d682effec</em:updateHash>
+                <em:updateInfoURL>http://skipme.github.io/ytranslate/</em:updateInfoURL>
               </RDF:Description>
             </em:targetApplication>
           </RDF:Description>
