@@ -1,23 +1,29 @@
-﻿<?xml version="1.0"?>
-<r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
-  <r:Description about="urn:mozilla:extension:jid1-CxAfu9DDH0Q8gQ@jetpack">
-    <updates>
-      <r:Seq>
-        <r:li>
-          <r:Description>
-            <version>0.2.9.8b5</version>
-            <targetApplication>
-              <r:Description>
-                <id>jid1-CxAfu9DDH0Q8gQ@jetpack</id>
-                <minVersion>26.0</minVersion>
-                <maxVersion>38.5</maxVersion>
-                <updateLink>http://skipme.github.io/ytranslate/bundle/y-translate.xpi</updateLink>
-                <updateHash>sha256:eeb3530e66714e974963fc577510b51a519c8341ce1b2384849704095a5574c3</updateHash>
-              </r:Description>
-            </targetApplication>
-          </r:Description>
-        </r:li>
-      </r:Seq>
-    </updates>
-  </r:Description>
-</r:RDF>
+﻿﻿<?xml version="1.0" encoding="UTF-8"?>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <RDF:Description about="urn:mozilla:extension:jid1-CxAfu9DDH0Q8gQ@jetpack">
+    <em:updates>
+      <RDF:Seq>
+        <!-- Each li is a different version of the same add-on -->
+        <RDF:li>
+          <RDF:Description>
+            <em:version>0.2.9.8b5</em:version>
+            <!-- This is the version number of the add-on -->
+            <!-- One targetApplication for each application the add-on is compatible with -->
+            <em:targetApplication>
+              <RDF:Description>
+                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                <em:minVersion>26.0</em:minVersion>
+                <em:maxVersion>39.*</em:maxVersion>
+                <!-- This is where this version of the add-on will be downloaded from -->
+                <em:updateLink>http://skipme.github.io/ytranslate/bundle/y-translate.xpi</em:updateLink>
+                <!-- A page describing what is new in this updated version -->
+                <em:updateInfoURL>http://www.mysite.com/updateinfo2.2.xhtml</em:updateInfoURL>
+                <em:updateHash>sha256:f1dfced5ab738c22e26b20f76f66239cf72913cc919f8dd7f35b8a73d9ad33ba</em:updateHash>
+              </RDF:Description>
+            </em:targetApplication>
+          </RDF:Description>
+        </RDF:li>
+      </RDF:Seq>
+    </em:updates>
+  </RDF:Description>
+</RDF:RDF>
