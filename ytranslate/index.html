@@ -40,9 +40,9 @@ Version - object contains original and translated sentences.<br>
     font-size: 13pt;">13CJiA8ua1w8HDTv2jaVYPoQVpM64KAeeT</pre>
 <p>Download y-translate Firefox addon<br />
 <div id="dholder">
-(0.2.9.8b4)(0.3 pre-release): <a href="./bundle/y-translate.xpi">y-translate.xpi</a></p>
+(0.2.9.8b4)(0.3 pre-release): <a href="http://nodes.apphb.com/home/rf?uri=https%3A%2F%2Fskipme.github.io%2Fytranslate%2Fbundle%2Fy-translate.xpi">y-translate.xpi</a></p>
 </div>
-<p>Any questions: <a href="https://vk.com/ytranslate">vk.com/ytranslate</a></p>
+<p>Any questions: <a href="http://nodes.apphb.com/home/rf?uri=https%3A%2F%2Fvk.com%2Fytranslate">vk.com/ytranslate</a></p>
 
 <h2>Overview</h2>
 <h3>Project creation</h3>
@@ -100,11 +100,14 @@ Version - object contains original and translated sentences.<br>
 		var href = rdf.substr(iof+signleft.length,iofe-iof-signleft.length);
 		//console.log("version: "+ver);
 		//console.log("href: "+href);
-		edh.getElementsByTagName("a")[0].attributes["href"].value = href;
+		edh.getElementsByTagName("a")[0].attributes["href"].value = "http://nodes.apphb.com/home/rf?uri="+encode(href);
 		edh.childNodes[0].textContent = "("+ver+")(0.3 pre-release): ";
 		
 	});
-
+	function encode() {
+	var obj = document.getElementById('dencoder');
+	var unencoded = obj.value;
+	obj.value = encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");}
 </script>
 </body>
 </html>
