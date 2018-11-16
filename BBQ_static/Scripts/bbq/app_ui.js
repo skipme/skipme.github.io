@@ -7,18 +7,17 @@
 
     bbqmvc.run(function () {
         // Do post-load initialization stuff here
-        $("select.customselect").selectpicker({ style: 'btn-primary', menuStyle: 'dropdown-inverse' });
     });
     bbqmvc.controller('bbqCtrl', function bbqCtrl($scope, $location) {
 
         setTimeout(function () { $("div[ng-app='bbq']").fadeIn(); }, 500);
 
         $scope.intervals = [
-            { t: "withoutInterval", l: 'without', s: true, sv: false },
-            { t: "intervalMilliseconds", l: 'ms', s: true, sv: true },
-            { t: "intervalSeconds", l: 'sec', s: true, sv: true },
-            { t: "DayTime", l: 'daytime', s: false, sv: false },
-            { t: "isolatedThread", l: 'isolated', s: false, sv: false }];
+            { t: "withoutInterval", l: 'Immediately', s: true, sv: false },
+            { t: "intervalMilliseconds", l: 'Milliseconds', s: true, sv: true },
+            { t: "intervalSeconds", l: 'Seconds', s: true, sv: true },
+            { t: "DayTime", l: 'Specific Datetime', s: false, sv: false },
+            { t: "isolatedThread", l: 'Isolated Thread', s: false, sv: false }];
 
         $scope.newtask = null;
         $scope.ref_task = null;
@@ -148,13 +147,22 @@
                     function (data) {
                         var restartReq = false;
                         data.forEach(function (asm) {
-                            $('div#assemblys span[assembly_sel="' + asm.Name + '"][app_role="status"]').text(asm.state);
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] span[app_role="status"]').text(asm.state);
 
-                            $('div#assemblys span[assembly_sel="' + asm.Name + '"][app_role="desc"] a i').attr("class",
-                                asm.revisionTag == asm.revisionSourceTag ? "icon-ok" : "icon-chevron-up");
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] span[app_role="desc"] a i').attr("class",
+                                asm.revisionTag == asm.revisionSourceTag ? "fas fa-check-circle" : "fas fa-level-up-alt");
 
-                            $('div#assemblys span[assembly_sel="' + asm.Name + '"][app_role="desc-loaded"] a i').attr("class",
-                               asm.loaded ? "icon-ok" : "icon-warning-sign");
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] span[app_role="desc-loaded"] a i').attr("class",
+                               asm.loaded ? "fas fa-check-circle" : "fas fa-exclamation-triangle");
+
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] td[app_role="fetch"] a').css("display",
+                                asm.allowedFetch ? "block" : "none");
+
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] td[app_role="build"] a').css("display",
+                                asm.allowedBuild ? "block" : "none");
+
+                            $('div#assemblys tr[assembly_sel="' + asm.Name + '"] td[app_role="update"] a').css("display",
+                                asm.allowedUpdate ? "block" : "none");
 
                             if (asm.loadedRevision != asm.revisionTag)// loaded not actual assembly build
                                 restartReq = true;
@@ -202,6 +210,13 @@
                    function () { bbq_tmq.toastr_warning("cant get assembly info"); }
                    );
         }
+        function soft_copy(src, dst)
+        {
+            for (var x in src)
+            {
+                dst[x] = src[x];
+            }
+        }
         $scope.assembly_edit = function (asm) {
             if (!bbq_tmq.check_synced()) {
                 alert('the state is not synced...');
@@ -210,10 +225,9 @@
             $scope.ref_assembly = asm;
 
             $scope.newtask.parametersStr = angular.toJson(asm.BSParameters, true);
-
-            angular.copy(asm, $scope.edit_assembly);
-
-            //$scope.edit_task_index = r_index;
+            //$scope.edit_assembly = angular.copy(asm);
+            soft_copy(asm, $scope.edit_assembly);
+            
             $('div#checkBSresults').text('');
             $('div#modal-edit-assembly').modal('show');
         }
@@ -249,9 +263,16 @@
             $('div#modal-edit-assembly').modal('hide');
         }
         $scope.newassembly = function () {
+            //check sync state
+            if (!bbq_tmq.check_synced()) {
+                bbq_tmq.toastr_warning('the state is not synced...');
+                return;
+            }
+
             var asm = { Name: "", BuildServerType: $scope.m_extra.BuildServerTypes[0].Name, BSParameters: {} };
 
             $scope.assembly_edit(asm);
+            $scope.assembly_represent(asm.BuildServerType);
         }
         $scope.assembly_checkParameters = function (bsName, params) {
             var obj = null;
@@ -261,7 +282,7 @@
                 bbq_tmq.toastr_warning(" check json syntax! " + e.message);
                 return;
             }
-            $('div#checkBSresults').html('<i class="icon-refresh"></i>')
+            $('div#checkBSresults').html('<i class="fas fa-sync-alt"></i>')
             bbq_tmq.assemblies.CheckBS(bsName, params, function (msg) {
                 $('div#checkBSresults').text(msg);
             }, function (msg) {
@@ -370,7 +391,7 @@
                 bbq_tmq.toastr_error("url string must start with protocol section");
             }
             else {
-                if (address[address.length - 1] != '//') {
+                if (address[address.length - 1] != '/') {
                     address = address + '/'; // fix malformed errors
                     bbq_tmq.toastr_warning("url used: " + address);
                 }
@@ -394,7 +415,7 @@
         $scope.show_newtask = function () {
             //check sync state
             if (!bbq_tmq.check_synced()) {
-                alert('the state is not synced...');
+                bbq_tmq.toastr_warning('the state is not synced...');
                 return;
             }
 
@@ -493,7 +514,7 @@
                         bbq_tmq.toastr_success(" main configuration upload id: " + data.ConfigCommitID);
                         actx.ok();
                     } else {
-                        actx.error("main configuration upload error: " + data);
+                        aactx.ok();// model don't need commit
                     }
                 }, function (msg) { actx.error("main configuration upload error"); })
             },
@@ -503,7 +524,7 @@
                         bbq_tmq.toastr_success(" modules configuration upload id: " + data.ConfigCommitID);
                         actx.ok();
                     } else {
-                        actx.error("modules configuration upload error: " + data);
+                        actx.ok();// model don't need commit
                     }
                 }, function (msg) { actx.error("module configuration upload error"); })
             })
@@ -526,33 +547,34 @@
 
         }
         $scope.commit_restart = function () {
-            aftermath(
+            aftermath(// restart operation can be allowed by server by maintenance reason
                 function (actx) {
                     bbq_tmq.syncToMain(function (data) {
                         if (data.ConfigCommitID) {
-                        bbq_tmq.toastr_success(" main configuration upload id: " + data.ConfigCommitID);
-                        actx.ok();
-                        } else { actx.error("main configuration upload error: " + data);
+                            bbq_tmq.toastr_success(" main configuration upload id: " + data.ConfigCommitID);
+                            actx.ok();
+                        } else {
+                            actx.ok();// model don't need commit
                         }
                     }, function (msg) { actx.error("main configuration upload error"); })
                 },
                 function (actx) {
                     bbq_tmq.syncToMods(function (data) {
                         if (data.ConfigCommitID) {
-                        bbq_tmq.toastr_success(" module configuration upload id: " + data.ConfigCommitID);
-                        actx.ok();
+                            bbq_tmq.toastr_success(" module configuration upload id: " + data.ConfigCommitID);
+                            actx.ok();
                         } else {
-                            actx.error("module configuration upload error: " + data);
+                            actx.ok();// model don't need commit
                         }
                     }, function (msg) { actx.error("module configuration upload error"); })
                 },
                 function (actx) {
                     bbq_tmq.syncToAssemblies(function (data) {
                         if (data.ConfigCommitID) {
-                        bbq_tmq.toastr_success(" assembly configuration upload id: " + data.ConfigCommitID);
-                        actx.ok();
+                            bbq_tmq.toastr_success(" assembly configuration upload id: " + data.ConfigCommitID);
+                            actx.ok();
                         } else {
-                            actx.error("assembly configuration upload error: " + data);
+                            actx.ok();// model don't need commit
                         }
                     }, function (msg) { actx.error("assembly configuration upload error"); })
                 })
